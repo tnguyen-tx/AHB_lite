@@ -1,0 +1,19 @@
+Date:	1/15/2003
+Author:	Nelson Yen-Chung Chang
+Topic:	Single register AHB register map inteface.
+
+Descriptioin:
+	This package adds a new module called "MYIP" to the original example2 design.
+	"MYIP" has a device with AHB slave IF and a single register for read and write. 
+	The address for this register is 0xC210_0000.
+
+	MYIP is modified from AHBSSRAM.v. It removed all unecessary I/Os and logics for 
+	SSRAM access. 
+
+Extending this to your homework:
+	Extend the number of registers to fit your IP core's I/O requirement. In order to
+	handle multiple registers, you'll need to decode the address to
+	(case statement for address) access these internal registers.
+
+That's all I can help.
+Good luck!!
