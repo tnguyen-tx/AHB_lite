@@ -1,5 +1,6 @@
 
 ../rtl/AHBDecoder.v
+../rtl/MyIP.v
 ../rtl/AHBMuxS2M.v
 ../rtl/AHBZBTRAM.v
 ../rtl/AHB2APB.v
