@@ -37,6 +37,7 @@ module AHBDecoder (
                    HSELAHBAPB,
                    HSELSSRAM,
                    HSELLOGICMODULE,
+                   HSELMYIP,
                    HSELDefault,
                    HREADYOut,
                    HRESP
@@ -51,6 +52,7 @@ input   [3:0] HDRID;           // header ID (stack position)
 input  [31:0] HADDR;           // AHB address bus
 // Outputs
 output        HSELAHBAPB;      // peripheral select - APB Peripherals
+output        HSELMYIP;      // myIP select - APB Peripherals
 output        HSELSSRAM;       // peripheral select - SSRAM controller
 output        HSELLOGICMODULE; // LM being addressed - used for response
                                // enable in top level
@@ -67,6 +69,8 @@ wire    [3:0] HDRID;           // header ID (stack position)
 wire   [31:0] HADDR;           // AHB address bus
 
 // Outputs
+//thuy
+wire 		  HSELMYIP;	// my IP selection
 wire          HSELAHBAPB;       // peripheral select - APB Peripherals
 wire          HSELSSRAM;        // peripheral select - SSRAM controller
 wire          HSELLOGICMODULE;  // LM being addressed - used for response
@@ -118,6 +122,8 @@ wire       iHSELAHBAPB;
 wire       iHSELSSRAM;
 // Internal copy of HSELSSRAM
 
+wire       iHSELMYIP;
+
 wire       iHSELLOGICMODULE;
 // Internal copy of HSELLOGICMODULE
 
@@ -161,6 +167,9 @@ assign iHSELAHBAPB      = ((iHSELLOGICMODULE == 1'b1) &
 
 assign iHSELSSRAM       = ((iHSELLOGICMODULE == 1'b1) &
                            (HADDR[27:20] == 8'b00100000)) ? 1'b1 : 1'b0;
+
+assign iHSELMYIP        = ((iHSELLOGICMODULE == 1'b1) &
+                           (HADDR[31-:12] ==12'b1100_0010_0001)) ? 1'b1 : 1'b0;
 
 assign iHSELDefault     = ((iHSELLOGICMODULE == 1'b1) &
                            ~(HADDR[27:25] == 3'b000) &
@@ -213,6 +222,7 @@ end // p_HREADYSeq
 assign HSELLOGICMODULE  = iHSELLOGICMODULE;
 assign HSELAHBAPB       = iHSELAHBAPB;
 assign HSELSSRAM        = iHSELSSRAM;
+assign HSELMYIP         = iHSELMYIP;
 assign HSELDefault      = iHSELDefault;
 assign HREADYOut        = iHREADYOut;
 
