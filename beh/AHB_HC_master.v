@@ -153,6 +153,54 @@ begin
 			HLOCK = 1'b0;
 	    end
 	end
+
+	@(posedge HCLK) 
+
+	@(posedge HCLK) 
+	begin
+	    #2;
+	    if((HREADYin==1'b1)&&(HRESP==`AHB_RSP_OKAY))
+	    begin
+			HWRITE = 1'b1;
+			HTRANS = `AHB_NONSEQ;
+	        HSIZE = `AHB_HSIZE_32;
+			HADDR = 32'hC210_0000;	// NS Write @ 0xC210_0000 (myIP module)
+			HWDATA = 32'h0000_0000;
+			HBUSREQ = 1'b1;
+			HLOCK = 1'b0;
+	    end
+	end
+	@(posedge HCLK) 
+	begin
+	    #2;
+	    if((HREADYin==1'b1)&&(HRESP==`AHB_RSP_OKAY))
+	    begin
+			HWRITE = 1'b0; 				//Read is not allowed
+			HTRANS = `AHB_NONSEQ;
+	        HSIZE = `AHB_HSIZE_32;
+			HADDR = 32'hC210_0000;	// NS Write @ 0xC210_0000 (myIP module)
+			HWDATA = 32'h4F4B; 		//"OK" message
+			HBUSREQ = 1'b1;
+			HLOCK = 1'b0;
+	    end
+	end
+
+	@(posedge HCLK) 
+	begin
+	    #2;
+	    if((HREADYin==1'b1)&&(HRESP==`AHB_RSP_OKAY))
+	    begin
+			HWRITE = 1'b0; 				//Read from myIP module
+			HTRANS = `AHB_NONSEQ;
+	        HSIZE = `AHB_HSIZE_32;
+			HADDR = 32'hC210_0000;	// Read @ 0xC210_0000 (myIP module)
+			HWDATA = 32'h0; 		
+			HBUSREQ = 1'b1;
+			HLOCK = 1'b0;
+	    end
+	end
+
+
 end
 
 assign RDATA_tmp = RDATA;
