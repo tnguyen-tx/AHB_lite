@@ -122,8 +122,8 @@ always #(cycle/2)
 
 initial 
 begin
-    $fsdbDumpfile("LM_AHBAPB_test.fsdb");
-    $fsdbDumpvars;
+    $recordfile("LM_AHBAPB_test.trn");
+    $recordvars();
 	HCLK = 1'b1;
 	#2;
 	#cycle	HRESETn = 1'b0;
