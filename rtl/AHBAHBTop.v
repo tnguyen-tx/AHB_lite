@@ -203,6 +203,9 @@ wire [31:0] HRDataApb;
 wire [31:0] HRDATASSRAM;
 // read data bus from SSRAM
 
+wire [31:0] HRDATAMYIP;
+// read data bus from my IP
+
 wire [31:0] HRDATA;
 // read data bus from mux to master(s)
 
@@ -221,6 +224,9 @@ wire  [1:0] HRespApb;
 wire  [1:0] HRESPSSRAM;
 // hresp response from SSRAM
 
+wire  [1:0] HRESPMYIP;
+// hresp response from my IP
+	//
 wire  [1:0] HRESPDefault;
 // hresp response from default slave
 
@@ -269,6 +275,7 @@ AHBDecoder uAHBDecoder                (
                     .HSELAHBAPB       (HSELAHBAPB),
                     .HSELSSRAM        (HSELSSRAM),
                     .HSELLOGICMODULE  (HSELLOGICMODULE),
+					.HSELMYIP 			(HSELMYIP),
                     .HSELDefault      (HSELDefault),
                     .HREADYOut        (HReadyOutDefault),
                     .HRESP            (HRESPDefault)
@@ -282,15 +289,19 @@ AHBMuxS2M uAHBMuxS2M                  (
                     .HRESETn          (HRESETn),
                     .HSELAHBAPB       (HSELAHBAPB),
                     .HSELSSRAM        (HSELSSRAM),
+                    .HSELMYIP         (HSELMYIP),
                     .HREADYAHBAPB     (HReadyOutApb),
                     .HREADYSSRAM      (HReadyOutSsram),
+                    .HREADYMYIP      (HReadyOutMyip),
                     .HREADYDefault    (HReadyOutDefault),
                     .HRESPAHBAPB      (HRespApb),
                     .HRESPSSRAM       (HRESPSSRAM),
+                    .HRESPMYIP       (HRESPMYIP),
                     .HRESPDefault     (HRESPDefault),
                     .HREADYIn         (HREADY),
                     .HRDATAAHBAPB     (HRDataApb),
                     .HRDATASSRAM      (HRDATASSRAM),
+                    .HRDATAMYIP      (HRDATAMYIP),
                     .HREADYOut        (iHReadyOut),
                     .HRESP            (iHRespOut),
                     .HRDATA           (HRDATA)
@@ -349,9 +360,9 @@ AHBZBTRAM uAHBZBTRAM                  (
                     .SADDR            (SADDR)
                     );
 
-/*
+
 // -----------------------------------------------------------------------------
-// Instantiation of MYIP	// added & modded by Nelson
+// Instantiation of MYIP	
 // -----------------------------------------------------------------------------
 MYIP 	uMYIP       (
                     .HCLK             (HCLK),
@@ -367,7 +378,7 @@ MYIP 	uMYIP       (
                     .HRESP            (HRESPMYIP),
                     .HRDATA           (HRDATAMYIP)
                     );
-*/
+
 
 // -----------------------------------------------------------------------------
 // Integrator System Bus uses tri-state muxing of data and slave response
