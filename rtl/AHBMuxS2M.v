@@ -31,15 +31,19 @@ module AHBMuxS2M (
                   HRESETn,
                   HSELAHBAPB,
                   HSELSSRAM,
+                  HSELMYIP,
                   HREADYAHBAPB,
                   HREADYSSRAM,
+                  HREADYMYIP,
                   HREADYDefault,
                   HRESPAHBAPB,
                   HRESPSSRAM,
+                  HRESPMYIP,
                   HRESPDefault,
                   HREADYIn,
                   HRDATAAHBAPB,
                   HRDATASSRAM,
+                  HRDATAMYIP,
 // Outputs
                   HREADYOut,
                   HRESP,
@@ -51,15 +55,19 @@ input         HCLK;          // system bus clock
 input         HRESETn;       // reset input (active low)
 input         HSELAHBAPB;    // AHB peripheral select - APB bridge
 input         HSELSSRAM;     // AHB peripheral select - SSRAM
+input         HSELMYIP;     // AHB peripheral select - SSRAM
 input         HREADYAHBAPB;  // hready from APB
 input         HREADYSSRAM;   // hready from SSRAM
+input         HREADYMYIP;   // hready from SSRAM
 input         HREADYDefault; // hready from default slave (in decoder)
 input   [1:0] HRESPAHBAPB;   // hresponse from APB
 input   [1:0] HRESPSSRAM;    // hresponse from SSRAM
+input   [1:0] HRESPMYIP;    // hresponse from my IP
 input   [1:0] HRESPDefault;  // hresponse from default slave
 input         HREADYIn;      // hready in
 input  [31:0] HRDATAAHBAPB;  // read data bus from APB
 input  [31:0] HRDATASSRAM;   // read data bus from SSRAM
+input  [31:0] HRDATAMYIP;   // read data bus from SSRAM
 
 // Outputs
 output        HREADYOut;     // muxed hready out
@@ -76,6 +84,7 @@ wire          HREADYSSRAM;   // hready from SSRAM
 wire          HREADYDefault; // hready from default slave (in decoder)
 wire    [1:0] HRESPAHBAPB;   // hresponse from APB
 wire    [1:0] HRESPSSRAM;    // hresponse from SSRAM
+wire    [1:0] HRESPMYIP;    // hresponse from my IP
 wire    [1:0] HRESPDefault;  // hresponse from default slave
 wire          HREADYIn;      // hready in
 wire   [31:0] HRDATAAHBAPB;  // read data bus from APB
@@ -118,6 +127,8 @@ reg      SelAHBAPB;
 reg      Selssram;
 // Selecct SSRAM
 
+reg      SelMYIP;
+
 // -----------------------------------------------------------------------------
 // Function declarations
 // -----------------------------------------------------------------------------
@@ -141,12 +152,14 @@ begin : p_HSELSeq
     begin
       SelAHBAPB  <= 1'b0;
       Selssram   <= 1'b0;
+      SelMYIP    <= 1'b0;
     end
   else
     if (HREADYIn == 1'b1)
       begin
         SelAHBAPB <= HSELAHBAPB;
         Selssram  <= HSELSSRAM;
+        SelMYIP  <= HSELMYIP;
       end
 end // p_HSELSeq
 
@@ -155,17 +168,20 @@ end // p_HSELSeq
 // -----------------------------------------------------------------------------
 assign HRDATA           = (SelAHBAPB == 1'b1) ?
                           HRDATAAHBAPB : ((Selssram == 1'b1) ?
-                          HRDATASSRAM  : 32'h00000000);	
+                          HRDATASSRAM  : ((SelMYIP == 1'b1) ?	
+                          HRDATAMYIP   : 32'h00000000));	
 
 assign iHREADY          = (SelAHBAPB == 1'b1) ?
                            HREADYAHBAPB : ((Selssram == 1'b1) ?
-                           HREADYSSRAM  : HREADYDefault);
+                           HREADYSSRAM  : ((SelMYIP == 1'b1) ?
+                           HREADYMYIP   : HREADYDefault));
 
 assign HREADYOut        = iHREADY;
 
 assign HRESP            = (SelAHBAPB == 1'b1) ?
                            HRESPAHBAPB  : ((Selssram == 1'b1) ?
-                           HRESPSSRAM   : HRESPDefault); 
+                           HRESPSSRAM   : ((SelMYIP == 1'b1) ? 
+                           HRESPMYIP   : HRESPDefault)); 
 
 endmodule
 
